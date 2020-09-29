@@ -17,7 +17,17 @@
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 
-// defines y variables RGBCounter ---------------------------------------------------------
+// Variable para Switch case
+char Inputs;
+
+// Variable Contador Binario
+unsigned char counter=0;
+
+// Variables Auto Increible
+int counterKitt=0;
+int kittLights [] = {0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01};
+
+// Defines y variables RGBCounter ---------------------------------------------------------
 #define RED GPIO_PIN_14
 #define GREEN GPIO_PIN_12
 #define BLUE GPIO_PIN_15
@@ -26,11 +36,7 @@ static void MX_GPIO_Init(void);
 int color[7]={BLUE,GREEN,GREEN+BLUE,RED,RED+BLUE,RED+GREEN,RED+GREEN+BLUE};
 int i=0;
 
-char Inputs;
-unsigned char counter=0;
-int counterKitt=0;
-int kittLights [] = {0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01};
-
+// Declaración de funciones
 void BinaryCounter (void);
 void Kitt (void); //Knight Industries Two Thousand
 void RGBCounter(void);
@@ -48,6 +54,7 @@ int main(void){
   /* Infinite loop */
   while (1){
 	  Inputs = (GPIOE->IDR);
+	  HAL_GPIO_WritePin(GPIOD, 0xFF, GPIO_PIN_RESET);
 
 	  switch(Inputs){
 	  	  case 231:
@@ -57,11 +64,9 @@ int main(void){
 	  		  Kitt();
 	  		  break;
 	  	  case 199:
-	  		  HAL_GPIO_WritePin(GPIOD, 0xFF, GPIO_PIN_RESET);
 	  		  RGBCounter();
 	  		  break;
 	  	  default:
-	  		  HAL_GPIO_WritePin(GPIOD, 0xFF, GPIO_PIN_RESET);
 	  		  break;
 	  }
 	  delay1;
@@ -69,13 +74,11 @@ int main(void){
 }
 
 void BinaryCounter (void){
-	HAL_GPIO_WritePin(GPIOD, 0xFF, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOD, counter, GPIO_PIN_SET);
 	counter++;
 }
 
 void Kitt (void){
-	HAL_GPIO_WritePin(GPIOD, 0xFF, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOD, kittLights[counterKitt], GPIO_PIN_SET);
 	counterKitt++;
 	if(counterKitt>14){

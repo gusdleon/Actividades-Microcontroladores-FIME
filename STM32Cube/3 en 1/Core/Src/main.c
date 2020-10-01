@@ -24,8 +24,8 @@ char Inputs;
 unsigned char counter=0;
 
 // Variables Auto Increible
-int counterKitt=0;
-int kittLights [] = {0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01};
+uint8_t counterKitt=0;
+uint8_t kittLights [] = {0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01};
 
 // Defines y variables RGBCounter ---------------------------------------------------------
 #define RED GPIO_PIN_14
@@ -34,7 +34,7 @@ int kittLights [] = {0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x40,0x20,0x10,0x08
 #define delay1 HAL_Delay(100)
 
 int color[7]={BLUE,GREEN,GREEN+BLUE,RED,RED+BLUE,RED+GREEN,RED+GREEN+BLUE};
-int i=0;
+uint8_t i=0;
 
 // Declaración de funciones
 void BinaryCounter (void);
@@ -59,9 +59,11 @@ int main(void){
 	  switch(Inputs){
 	  	  case 231:
 	  		  BinaryCounter();
+	  		  delay1;
 	  		  break;
 	  	  case 215:
 	  		  Kitt();
+	  		  delay1;
 	  		  break;
 	  	  case 199:
 	  		  RGBCounter();
@@ -69,7 +71,6 @@ int main(void){
 	  	  default:
 	  		  break;
 	  }
-	  delay1;
   }
 }
 
@@ -83,21 +84,16 @@ void Kitt (void){
 	counterKitt++;
 	if(counterKitt>14){
 		counterKitt=1;
-	}else{
-
 	}
 }
 
 void RGBCounter(void){
-
-	if(i<7){
-		HAL_GPIO_WritePin(GPIOD, color[i], GPIO_PIN_SET);
-		delay1;
-		HAL_GPIO_WritePin(GPIOD, color[i], GPIO_PIN_RESET);
-		i++;
-		if(i>=7){
-			i=0;
-		}
+	HAL_GPIO_WritePin(GPIOD, color[i], GPIO_PIN_SET);
+	delay1;
+	HAL_GPIO_WritePin(GPIOD, color[i], GPIO_PIN_RESET);
+	i++;
+	if(i>=7){
+		i=0;
 	}
 }
 

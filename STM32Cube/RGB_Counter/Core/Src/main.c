@@ -20,10 +20,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #define RED GPIO_PIN_14
-#define GREEN GPIO_PIN_15
-#define BLUE GPIO_PIN_12
+#define GREEN GPIO_PIN_12
+#define BLUE GPIO_PIN_15
 
-#define delay1 HAL_Delay(100)
+#define delay1 HAL_Delay(700)
 
 int color[7]={BLUE,GREEN,GREEN+BLUE,RED,RED+BLUE,RED+GREEN,RED+GREEN+BLUE};
 /* Private includes ----------------------------------------------------------*/

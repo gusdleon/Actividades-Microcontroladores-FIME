@@ -123,7 +123,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	  int testingtime = HAL_GetTick();
-	  if(((HAL_GetTick() - start) < espera) && run==0){
+	  if(run==0){
 		  testingtime = HAL_GetTick();
 		  displayNumber(dn[i]);
 		  testingtime = HAL_GetTick();

@@ -23,6 +23,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stm32f4xx.h"
+#include "math.h"
+#include "stdbool.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,75 +44,42 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-int D1=0x00;
-int D2=0x10;
-int D3=0x20;
-int D4=0x30;
-int D5=0x40;
-int D6=0x50;
-int D7=0x60;
-int D8=0x70;
+int D[8]={0x00, 0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70};
+int numeros[10]={0x0,0x1,0x2,0x3,0x4,0x5,0x6,0x7,0x8,0x9};
+int delay = 1;						//tiempo de encendido de cada display
+bool run = false;
+int dn[]={88888888,11111111};
+int i=0;
+int dig[8];
+int start=0;
+int espera=1000;
+int dc= sizeof(dn) / sizeof(dn[0]);
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
-void msDelay(uint32_t msTime);
 void displayNumber(int numero);
-int numero=0;
-int numeros[10]={0x0,0x1,0x2,0x3,0x4,0x5,0x6,0x7,0x8,0x9};
-int num=0,num1=0,num2=0,num3=0,num4=0,num5=0,num6=0,num7=0,num8=0,num9=0,num10=0,n=0; //IDK
-int u=0;
-int uf=75;
-int delay = 1;
+void setDisplay(int di[]);
 
 void SysInit(void);
-void setDisplay(int dig1, int dig2, int dig3, int dig4, int dig5, int dig6, int dig7, int dig8);
-void Display(int count);
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void msDelay (uint32_t msTime){
-	for(uint32_t i=0; i<msTime*4000; i++);
-}
-
-void barrido(int numero){
-	Display(numero);
-}
-
 void displayNumber(int count){
-	int dig1,dig2,dig3,dig4,dig5,dig6,dig7,dig8;
-	dig1=count%10;						//Miles
-	dig2=(count%100)/10;				//Centenas
-	dig3=(count%1000)/100;				//Decenas
-	dig4=(count%10000)/1000;			//Unidades
-	dig5=(count%100000)/10000;			//Miles
-	dig6=(count%1000000)/100000;		//Centenas
-	dig7=(count%10000000)/1000000;		//Decenas
-	dig8=(count%100000000)/10000000;	//Unidades
-	setDisplay(dig1,dig2,dig3,dig4,dig5,dig6,dig7,dig8);
+	int power;
+	for(int i=0; i<8; i++){
+		power = pow(10,(i+1));
+		dig[i]=(count%power)/(pow(10,i));
+	}
 }
-
-void setDisplay(int dig1, int dig2, int dig3, int dig4, int dig5, int dig6, int dig7, int dig8){
-	GPIOD->ODR=numeros[dig1]+D1;
-	HAL_Delay(delay);
-	GPIOD->ODR=numeros[dig2]+D2;
-	HAL_Delay(delay);
-	GPIOD->ODR=numeros[dig3]+D3;
-	HAL_Delay(delay);
-	GPIOD->ODR=numeros[dig4]+D4;
-	HAL_Delay(delay);
-	GPIOD->ODR=numeros[dig5]+D5;
-	HAL_Delay(delay);
-	GPIOD->ODR=numeros[dig6]+D6;
-	HAL_Delay(delay);
-	GPIOD->ODR=numeros[dig7]+D7;
-	HAL_Delay(delay);
-	GPIOD->ODR=numeros[dig8]+D8;
-	HAL_Delay(delay);
+void setDisplay(int dig[]){
+	for(int i=0; i<8; i++){
+		GPIOD->ODR=numeros[dig[i]]+D[i];
+		HAL_Delay(delay);
+	}
 }
 /* USER CODE END 0 */
 
@@ -153,19 +122,28 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  //displayNumber(numero);
-
-	  //IDk init
-	  if(u<uf){
-		  displayNumber(12345678);
-	  }else{
-		  displayNumber(11111111);
+	  int testingtime = HAL_GetTick();
+	  if(((HAL_GetTick() - start) < espera) && run==0){
+		  testingtime = HAL_GetTick();
+		  displayNumber(dn[i]);
+		  testingtime = HAL_GetTick();
+		  i++;
+		  testingtime = HAL_GetTick();
+		  run=true;
+		  testingtime = HAL_GetTick();
 	  }
-	  u++;
-	  if(u==2*uf){
-		  u=0;
+	  testingtime = HAL_GetTick();
+	  setDisplay(dig);		//ejecucion de 16ms
+	  testingtime = HAL_GetTick();
+	  if((HAL_GetTick() - start) > espera){
+		  testingtime = HAL_GetTick();
+		  start = HAL_GetTick();
+		  testingtime = HAL_GetTick();
+		  run=false;
+		  if(i==dc){
+			  i=0;
+		  }
 	  }
-	 //IDK end
   }
   /* USER CODE END 3 */
 }

@@ -122,23 +122,14 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  int testingtime = HAL_GetTick();
 	  if(run==0){
-		  testingtime = HAL_GetTick();
 		  displayNumber(dn[i]);
-		  testingtime = HAL_GetTick();
 		  i++;
-		  testingtime = HAL_GetTick();
 		  run=true;
-		  testingtime = HAL_GetTick();
 	  }
-	  testingtime = HAL_GetTick();
 	  setDisplay(dig);		//ejecucion de 16ms
-	  testingtime = HAL_GetTick();
 	  if((HAL_GetTick() - start) > espera){
-		  testingtime = HAL_GetTick();
 		  start = HAL_GetTick();
-		  testingtime = HAL_GetTick();
 		  run=false;
 		  if(i==dc){
 			  i=0;

@@ -6,6 +6,9 @@
   ******************************************************************************
   * @attention
   *
+  * Codigo de usuario en lineas:
+  * 51-54, 100, 110-135, 401-409
+  *
   * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *

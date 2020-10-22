@@ -22,9 +22,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "stm32f4xx.h"
-#include "math.h"
-#include "stdbool.h"
+#include <math.h>
+#include <stdlib.h>
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,16 +44,11 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-int D[8]={0x00, 0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70};
+int D[8]={0x70, 0x60, 0x50, 0x40, 0x30, 0x20, 0x10, 0x00};
 int numeros[10]={0x0,0x1,0x2,0x3,0x4,0x5,0x6,0x7,0x8,0x9};
 int delay = 1;						//tiempo de encendido de cada display
-bool run = false;
-int dn[]={88888888,11111111};
-int i=0;
+int dn[1];
 int dig[8];
-int start=0;
-int espera=1000;
-int dc= sizeof(dn) / sizeof(dn[0]);
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -62,8 +57,6 @@ static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
 void displayNumber(int numero);
 void setDisplay(int di[]);
-
-void SysInit(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -122,19 +115,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  if(run==false){
-		  displayNumber(dn[i]);
-		  i++;
-		  run=true;
-	  }
 	  setDisplay(dig);		//ejecucion de 16ms
-	  if((HAL_GetTick() - start) > espera){
-		  start = HAL_GetTick();
-		  run=false;
-		  if(i==dc){
-			  i=0;
-		  }
-	  }
   }
   /* USER CODE END 3 */
 }
@@ -203,8 +184,8 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, LD4_Pin|LD3_Pin|LD5_Pin|LD6_Pin
-                          |O_74LS47_1_Pin|O_74LS47_2_Pin|O_74LS47_3_Pin|O_74LS47_4_Pin
-                          |O_74HC238_1_Pin|O_74HC238_2_Pin|O_74HC238_3_Pin, GPIO_PIN_RESET);
+                          |GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
+                          |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : CS_I2C_SPI_Pin */
   GPIO_InitStruct.Pin = CS_I2C_SPI_Pin;
@@ -265,11 +246,11 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(CLK_IN_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LD4_Pin LD3_Pin LD5_Pin LD6_Pin
-                           O_74LS47_1_Pin O_74LS47_2_Pin O_74LS47_3_Pin O_74LS47_4_Pin
-                           O_74HC238_1_Pin O_74HC238_2_Pin O_74HC238_3_Pin */
+                           PD0 PD1 PD2 PD3
+                           PD4 PD5 PD6 */
   GPIO_InitStruct.Pin = LD4_Pin|LD3_Pin|LD5_Pin|LD6_Pin
-                          |O_74LS47_1_Pin|O_74LS47_2_Pin|O_74LS47_3_Pin|O_74LS47_4_Pin
-                          |O_74HC238_1_Pin|O_74HC238_2_Pin|O_74HC238_3_Pin;
+                          |GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
+                          |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -297,6 +278,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Alternate = GPIO_AF10_OTG_FS;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : PD7 */
+  GPIO_InitStruct.Pin = GPIO_PIN_7;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
   /*Configure GPIO pins : Audio_SCL_Pin Audio_SDA_Pin */
   GPIO_InitStruct.Pin = Audio_SCL_Pin|Audio_SDA_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
@@ -311,10 +298,19 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(MEMS_INT2_GPIO_Port, &GPIO_InitStruct);
 
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+    if(GPIO_Pin == GPIO_PIN_7){
+    		dn[0]= rand() % 100000000;
+    		displayNumber(dn[0]);
+    	}
+    }
 /* USER CODE END 4 */
 
 /**

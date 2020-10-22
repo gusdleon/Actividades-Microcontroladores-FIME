@@ -1,3 +1,4 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file           : main.c
@@ -7,72 +8,82 @@
   *
   * Actividad Fundamental 1: 3 en 1
   * Alumno: Gustavo Alfonso de León de León
+  *
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
+  *
   ******************************************************************************
   */
+/* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
+
+/* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN PTD */
+
+/* USER CODE END PTD */
+
+/* Private define ------------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+
+// Gemeral Defines --
+#define delay1 HAL_Delay(100)
+
+// Defines RGBCounter --
+#define RED GPIO_PIN_14
+#define GREEN GPIO_PIN_12
+#define BLUE GPIO_PIN_15
+
+/* USER CODE END PD */
+
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
+/* Private variables ---------------------------------------------------------*/
+
+/* USER CODE BEGIN PV */
+
+// Variable para Switch case --
+char Inputs;
+
+// Variable Contador Binario --
+unsigned char counter=0;
+
+// Variables Auto Increible --
+uint8_t counterKitt=0;
+uint8_t kittLights [] = {0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01};
+
+// Variables RGBCounter --
+int color[7]={BLUE,GREEN,GREEN+BLUE,RED,RED+BLUE,RED+GREEN,RED+GREEN+BLUE};
+uint8_t i=0;
+
+/* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+/* USER CODE BEGIN PFP */
 
-// Variable para Switch case
-char Inputs;
-
-// Variable Contador Binario
-unsigned char counter=0;
-
-// Variables Auto Increible
-uint8_t counterKitt=0;
-uint8_t kittLights [] = {0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01};
-
-// Defines y variables RGBCounter ---------------------------------------------------------
-#define RED GPIO_PIN_14
-#define GREEN GPIO_PIN_12
-#define BLUE GPIO_PIN_15
-#define delay1 HAL_Delay(100)
-
-int color[7]={BLUE,GREEN,GREEN+BLUE,RED,RED+BLUE,RED+GREEN,RED+GREEN+BLUE};
-uint8_t i=0;
-
-// Declaración de funciones
 void BinaryCounter (void);
 void Kitt (void); //Knight Industries Two Thousand
 void RGBCounter(void);
 
+/* USER CODE END PFP */
 
-int main(void){
-  /* MCU Configuration--------------------------------------------------------*/
-	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
-  /* Configure the system clock */
-  SystemClock_Config();
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-
-  /* Infinite loop */
-  while (1){
-	  Inputs = (GPIOE->IDR);
-	  HAL_GPIO_WritePin(GPIOD, 0xFF, GPIO_PIN_RESET);
-
-	  switch(Inputs){
-	  	  case 231:
-	  		  BinaryCounter();
-	  		  delay1;
-	  		  break;
-	  	  case 215:
-	  		  Kitt();
-	  		  delay1;
-	  		  break;
-	  	  case 199:
-	  		  RGBCounter();
-	  		  break;
-	  	  default:
-	  		  break;
-	  }
-  }
-}
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
 
 void BinaryCounter (void){
 	HAL_GPIO_WritePin(GPIOD, counter, GPIO_PIN_SET);
@@ -97,10 +108,69 @@ void RGBCounter(void){
 	}
 }
 
+/* USER CODE END 0 */
 
+/**
+  * @brief  The application entry point.
+  * @retval int
+  */
+int main(void)
+{
+  /* USER CODE BEGIN 1 */
 
+  /* USER CODE END 1 */
 
+  /* MCU Configuration--------------------------------------------------------*/
 
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  HAL_Init();
+
+  /* USER CODE BEGIN Init */
+
+  /* USER CODE END Init */
+
+  /* Configure the system clock */
+  SystemClock_Config();
+
+  /* USER CODE BEGIN SysInit */
+
+  /* USER CODE END SysInit */
+
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  /* USER CODE BEGIN 2 */
+
+  /* USER CODE END 2 */
+
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  while (1)
+  {
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
+	  Inputs = (GPIOE->IDR);
+	  HAL_GPIO_WritePin(GPIOD, 0xFF, GPIO_PIN_RESET);
+
+	  switch(Inputs){
+	  case 231:
+		  BinaryCounter();
+		  delay1;
+		  break;
+	  case 215:
+		  Kitt();
+		  delay1;
+		  break;
+	  case 199:
+		  RGBCounter();
+		  break;
+	  default:
+		  break;
+	  }
+
+  }
+  /* USER CODE END 3 */
+}
 
 /**
   * @brief System Clock Configuration

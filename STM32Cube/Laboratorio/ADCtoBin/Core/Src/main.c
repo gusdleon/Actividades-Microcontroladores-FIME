@@ -98,6 +98,9 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
+
 	  HAL_ADC_Start(&hadc1);
 	  if(HAL_ADC_PollForConversion(&hadc1, 5) == HAL_OK){
 		  adcValue = HAL_ADC_GetValue(&hadc1);
@@ -111,7 +114,6 @@ int main(void)
 
 	  //HAL_Delay(100);
 
-    /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }

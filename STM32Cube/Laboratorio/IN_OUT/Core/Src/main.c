@@ -95,11 +95,12 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
+    /* USER CODE BEGIN 3 */
+
 	  GPIOD->ODR = (GPIOE->IDR);
 	  HAL_Delay(100);
 	  HAL_GPIO_WritePin(GPIOD, 0xFF,GPIO_PIN_RESET);
 
-    /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }

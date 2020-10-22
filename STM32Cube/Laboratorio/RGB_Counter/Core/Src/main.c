@@ -19,15 +19,15 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+
 #define RED GPIO_PIN_14
 #define GREEN GPIO_PIN_12
 #define BLUE GPIO_PIN_15
 
 #define delay1 HAL_Delay(700)
-
-int color[7]={BLUE,GREEN,GREEN+BLUE,RED,RED+BLUE,RED+GREEN,RED+GREEN+BLUE};
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
 
@@ -48,6 +48,8 @@ int color[7]={BLUE,GREEN,GREEN+BLUE,RED,RED+BLUE,RED+GREEN,RED+GREEN+BLUE};
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+
+int color[7]={BLUE,GREEN,GREEN+BLUE,RED,RED+BLUE,RED+GREEN,RED+GREEN+BLUE};
 
 /* USER CODE END PV */
 
@@ -100,6 +102,9 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
+
 	  for(int i=0; i<7; i++){
 		  HAL_GPIO_WritePin(GPIOD, color[i], GPIO_PIN_SET);
 		  delay1;
@@ -135,7 +140,6 @@ int main(void)
 	  HAL_GPIO_WritePin(GPIOD,RED + GREEN + BLUE, GPIO_PIN_RESET);
 	  */
 
-    /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }

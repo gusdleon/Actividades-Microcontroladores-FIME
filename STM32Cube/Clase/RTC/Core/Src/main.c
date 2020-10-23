@@ -7,7 +7,7 @@
   * @attention
   *
   * Codigo de usuario en lineas:
-  * 51-54, 100, 110-135, 401-409
+  * 50-54, 62-63, 68-81, 114, 124-134, 398-406
   *
   * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
@@ -48,8 +48,7 @@
 RTC_HandleTypeDef hrtc;
 
 /* USER CODE BEGIN PV */
-int sec,dsec,min,dmin,hou,dhou;
-int hold=0;
+int D[6]={0, 16, 48, 64, 96, 112}, cronometro [6], hold=0;
 RTC_TimeTypeDef aTime1;
 RTC_DateTypeDef aDate1;
 /* USER CODE END PV */
@@ -60,11 +59,27 @@ static void MX_GPIO_Init(void);
 static void MX_RTC_Init(void);
 /* USER CODE BEGIN PFP */
 
+void displayNumber(RTC_TimeTypeDef);
+void setDisplay(int[]);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+void displayNumber(RTC_TimeTypeDef tiempo){
+		cronometro[0] = (tiempo.Hours / 16);
+		cronometro[1] = (tiempo.Hours % 16);
+		cronometro[2] = (tiempo.Minutes / 16);
+		cronometro[3] = (tiempo.Minutes % 16);
+		cronometro[4] = (tiempo.Seconds / 16);
+		cronometro[5] = (tiempo.Seconds % 16);
+}
+void setDisplay(int numeros[]){
+	for(int i=0; i<6; i++){
+		GPIOD->ODR=numeros[i]+D[i];
+		HAL_Delay(1);
+	}
+}
 /* USER CODE END 0 */
 
 /**
@@ -114,25 +129,9 @@ int main(void)
 	  if(hold==1){
 		  HAL_RTC_SetTime(&hrtc, &aTime1, RTC_FORMAT_BCD);
 	  }else{
-		  dhou = (aTime1.Hours / 16);
-		  hou = (aTime1.Hours % 16);
-		  dmin = (aTime1.Minutes / 16);
-		  min = (aTime1.Minutes % 16);
-		  dsec = (aTime1.Seconds / 16);
-		  sec = (aTime1.Seconds % 16);
+		  displayNumber(aTime1);
 	  }
-	  GPIOD -> ODR =  dhou;
-	  HAL_Delay(1);
-	  GPIOD -> ODR = 16 + hou;
-	  HAL_Delay(1);
-	  GPIOD -> ODR = 48 + dmin;
-	  HAL_Delay(1);
-	  GPIOD -> ODR = 64 + min;
-	  HAL_Delay(1);
-	  GPIOD -> ODR = 96 + dsec;
-	  HAL_Delay(1);
-	  GPIOD -> ODR = 112 + sec;
-	  HAL_Delay(1);
+	  setDisplay(cronometro);
   }
   /* USER CODE END 3 */
 }

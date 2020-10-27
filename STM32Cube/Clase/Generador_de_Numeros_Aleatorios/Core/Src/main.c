@@ -34,7 +34,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define delay 1				//tiempo de encendido de cada display en ms
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -45,7 +44,16 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-int D[8]={0x70, 0x60, 0x50, 0x40, 0x30, 0x20, 0x10, 0x00};
+int dig1, dig2, dig3, dig4, dig5, dig6, dig7, dig8;
+int D1=0x70;//Y7
+int D2=0x60;
+int D3=0x50;
+int D4=0x40;
+int D5=0x30;
+int D6=0x20;
+int D7=0x10;
+int D8=0x00;//Y0
+int numeros[10]={0x0,0x01,0x2,0x3,0x4,0x5,0x6,0x7,0x8,0x9};
 int dn;
 int dig[8];
 /* USER CODE END PV */
@@ -55,23 +63,38 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
 void displayNumber(int);
-void setDisplay(int[]);
+void setDisplay(int, int, int, int, int, int, int, int);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void displayNumber(int count){
-	int power;
-	for(int i=0; i<8; i++){
-		power = pow(10,(i+1));
-		dig[i]=(count%power)/(pow(10,i));
-	}
+void displayNumber(int number){
+    dig1=number%10;                          //Miles
+    dig2=(number%100)/10;                     //Centenas
+    dig3=(number%1000)/100;                  //Decenas
+    dig4=(number%10000)/1000;
+    dig5=(number%100000)/10000;
+    dig6=(number%1000000)/100000;
+    dig7=(number%10000000)/1000000;
+    dig8=(number%100000000)/10000000;     //Unidades
 }
-void setDisplay(int dig[]){
-	for(int i=7; i>=0; i--){
-		GPIOD->ODR=dig[i]+D[i];
-		HAL_Delay(delay);
-	}
+void setDisplay(int dig1, int dig2, int dig3, int dig4, int dig5, int dig6, int dig7, int dig8){
+    GPIOD->ODR=numeros[dig1]+D1;
+    HAL_Delay(1);
+    GPIOD->ODR=numeros[dig2]+D2;
+    HAL_Delay(1);
+    GPIOD->ODR=numeros[dig3]+D3;
+    HAL_Delay(1);
+    GPIOD->ODR=numeros[dig4]+D4;
+    HAL_Delay(1);
+    GPIOD->ODR=numeros[dig5]+D5;
+    HAL_Delay(1);
+    GPIOD->ODR=numeros[dig6]+D6;
+    HAL_Delay(1);
+    GPIOD->ODR=numeros[dig7]+D7;
+    HAL_Delay(1);
+    GPIOD->ODR=numeros[dig8]+D8;
+    HAL_Delay(1);
 }
 /* USER CODE END 0 */
 
@@ -114,7 +137,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  setDisplay(dig);		//ejecucion de 16ms
+	  setDisplay(dig1, dig2, dig3, dig4, dig5, dig6, dig7, dig8);
   }
   /* USER CODE END 3 */
 }
@@ -306,7 +329,7 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 	if(GPIO_Pin == GPIO_PIN_7){
-		unsigned int se = HAL_GetTick();
+		int se = HAL_GetTick();
 		srand(se);
 		dn= rand() % 100000000;
 		displayNumber(dn);

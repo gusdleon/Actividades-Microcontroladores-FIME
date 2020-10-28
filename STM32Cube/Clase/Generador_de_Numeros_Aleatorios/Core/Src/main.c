@@ -22,7 +22,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <math.h>
 #include <stdlib.h>
 
 /* USER CODE END Includes */
@@ -77,6 +76,7 @@ void displayNumber(int number){
     dig6=(number%1000000)/100000;
     dig7=(number%10000000)/1000000;
     dig8=(number%100000000)/10000000;     //Unidades
+    setDisplay(dig1, dig2, dig3, dig4, dig5, dig6, dig7, dig8);
 }
 void setDisplay(int dig1, int dig2, int dig3, int dig4, int dig5, int dig6, int dig7, int dig8){
     GPIOD->ODR=numeros[dig1]+D1;
@@ -137,7 +137,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  setDisplay(dig1, dig2, dig3, dig4, dig5, dig6, dig7, dig8);
+	  displayNumber(dn);
   }
   /* USER CODE END 3 */
 }
@@ -332,7 +332,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 		int se = HAL_GetTick();
 		srand(se);
 		dn= rand() % 100000000;
-		displayNumber(dn);
 	}
 }
 /* USER CODE END 4 */

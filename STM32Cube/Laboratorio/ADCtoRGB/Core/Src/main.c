@@ -32,6 +32,11 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
+#define RED GPIO_PIN_14
+#define GREEN GPIO_PIN_12
+#define BLUE GPIO_PIN_15
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -43,6 +48,9 @@
 ADC_HandleTypeDef hadc1;
 
 /* USER CODE BEGIN PV */
+
+int adcValue;
+int adcOut;
 
 /* USER CODE END PV */
 
@@ -99,6 +107,48 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+	  HAL_ADC_Start(&hadc1);
+	  if(HAL_ADC_PollForConversion(&hadc1, 5) == HAL_OK){
+		  adcValue = HAL_ADC_GetValue(&hadc1);
+	  }
+	  HAL_ADC_Stop(&hadc1);
+	  if(adcValue <= 585){
+		  HAL_GPIO_WritePin(GPIOD,BLUE, GPIO_PIN_SET);
+		  HAL_Delay(10);
+		  HAL_GPIO_WritePin(GPIOD,BLUE, GPIO_PIN_RESET);
+	  }
+	  if(adcValue > 585 && adcValue <= 1170){
+		  HAL_GPIO_WritePin(GPIOD,GREEN, GPIO_PIN_SET);
+		  HAL_Delay(10);
+		  HAL_GPIO_WritePin(GPIOD,GREEN, GPIO_PIN_RESET);
+	  }
+	  if(adcValue > 1170 && adcValue <= 1755){
+		  HAL_GPIO_WritePin(GPIOD,BLUE+GREEN, GPIO_PIN_SET);
+		  HAL_Delay(10);
+		  HAL_GPIO_WritePin(GPIOD,BLUE+GREEN, GPIO_PIN_RESET);
+	  }
+	  if(adcValue > 1755 && adcValue <= 2340){
+		  HAL_GPIO_WritePin(GPIOD,RED, GPIO_PIN_SET);
+		  HAL_Delay(10);
+		  HAL_GPIO_WritePin(GPIOD,RED, GPIO_PIN_RESET);
+	  }
+	  if(adcValue > 2340 && adcValue <= 2925){
+		  HAL_GPIO_WritePin(GPIOD,RED+BLUE, GPIO_PIN_SET);
+		  HAL_Delay(10);
+		  HAL_GPIO_WritePin(GPIOD,RED+BLUE, GPIO_PIN_RESET);
+	  }
+	  if(adcValue > 2925 && adcValue <= 3510){
+		  HAL_GPIO_WritePin(GPIOD,RED+GREEN, GPIO_PIN_SET);
+		  HAL_Delay(10);
+		  HAL_GPIO_WritePin(GPIOD,RED+GREEN, GPIO_PIN_RESET);
+	  }
+	  if(adcValue > 3510 && adcValue <= 4095){
+		  HAL_GPIO_WritePin(GPIOD,RED+GREEN+BLUE, GPIO_PIN_SET);
+		  HAL_Delay(10);
+		  HAL_GPIO_WritePin(GPIOD,BLUE, GPIO_PIN_RESET);
+	  }
+
   }
   /* USER CODE END 3 */
 }

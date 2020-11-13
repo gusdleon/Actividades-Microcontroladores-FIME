@@ -57,7 +57,6 @@ static void MX_ADC1_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 int adcValue;
-int counter;
 int adcOut;
 /* USER CODE END 0 */
 
@@ -104,16 +103,12 @@ int main(void)
 	  HAL_ADC_Start(&hadc1);
 	  if(HAL_ADC_PollForConversion(&hadc1, 5) == HAL_OK){
 		  adcValue = HAL_ADC_GetValue(&hadc1);
-		  counter++;
 	  }
 	  HAL_ADC_Stop(&hadc1);
 	  adcOut= (adcValue/16);
 	  HAL_GPIO_WritePin(GPIOD, adcOut, GPIO_PIN_SET);
 	  HAL_Delay(100);
 	  HAL_GPIO_WritePin(GPIOD, 0xff, GPIO_PIN_RESET);
-
-	  //HAL_Delay(100);
-
   }
   /* USER CODE END 3 */
 }

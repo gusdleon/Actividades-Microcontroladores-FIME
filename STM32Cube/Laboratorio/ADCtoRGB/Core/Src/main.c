@@ -51,6 +51,7 @@ ADC_HandleTypeDef hadc1;
 
 int adcValue;
 int adcOut;
+int color[7]={BLUE,GREEN,GREEN+BLUE,RED,RED+BLUE,RED+GREEN,RED+GREEN+BLUE};
 
 /* USER CODE END PV */
 
@@ -113,41 +114,10 @@ int main(void)
 		  adcValue = HAL_ADC_GetValue(&hadc1);
 	  }
 	  HAL_ADC_Stop(&hadc1);
-	  if(adcValue <= 585){
-		  HAL_GPIO_WritePin(GPIOD,BLUE, GPIO_PIN_SET);
-		  HAL_Delay(10);
-		  HAL_GPIO_WritePin(GPIOD,BLUE, GPIO_PIN_RESET);
-	  }
-	  if(adcValue > 585 && adcValue <= 1170){
-		  HAL_GPIO_WritePin(GPIOD,GREEN, GPIO_PIN_SET);
-		  HAL_Delay(10);
-		  HAL_GPIO_WritePin(GPIOD,GREEN, GPIO_PIN_RESET);
-	  }
-	  if(adcValue > 1170 && adcValue <= 1755){
-		  HAL_GPIO_WritePin(GPIOD,BLUE+GREEN, GPIO_PIN_SET);
-		  HAL_Delay(10);
-		  HAL_GPIO_WritePin(GPIOD,BLUE+GREEN, GPIO_PIN_RESET);
-	  }
-	  if(adcValue > 1755 && adcValue <= 2340){
-		  HAL_GPIO_WritePin(GPIOD,RED, GPIO_PIN_SET);
-		  HAL_Delay(10);
-		  HAL_GPIO_WritePin(GPIOD,RED, GPIO_PIN_RESET);
-	  }
-	  if(adcValue > 2340 && adcValue <= 2925){
-		  HAL_GPIO_WritePin(GPIOD,RED+BLUE, GPIO_PIN_SET);
-		  HAL_Delay(10);
-		  HAL_GPIO_WritePin(GPIOD,RED+BLUE, GPIO_PIN_RESET);
-	  }
-	  if(adcValue > 2925 && adcValue <= 3510){
-		  HAL_GPIO_WritePin(GPIOD,RED+GREEN, GPIO_PIN_SET);
-		  HAL_Delay(10);
-		  HAL_GPIO_WritePin(GPIOD,RED+GREEN, GPIO_PIN_RESET);
-	  }
-	  if(adcValue > 3510 && adcValue <= 4095){
-		  HAL_GPIO_WritePin(GPIOD,RED+GREEN+BLUE, GPIO_PIN_SET);
-		  HAL_Delay(10);
-		  HAL_GPIO_WritePin(GPIOD,BLUE, GPIO_PIN_RESET);
-	  }
+	  adcOut = adcValue / 585.142857143;
+	  HAL_GPIO_WritePin(GPIOD, color[adcOut], GPIO_PIN_SET);
+	  HAL_Delay(1);
+	  HAL_GPIO_WritePin(GPIOD, color[adcOut], GPIO_PIN_RESET);
 
   }
   /* USER CODE END 3 */

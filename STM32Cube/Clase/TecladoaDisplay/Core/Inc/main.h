@@ -72,8 +72,18 @@ void Error_Handler(void);
 #define OTG_FS_PowerSwitchOn_GPIO_Port GPIOC
 #define PDM_OUT_Pin GPIO_PIN_3
 #define PDM_OUT_GPIO_Port GPIOC
-#define B1_Pin GPIO_PIN_0
-#define B1_GPIO_Port GPIOA
+#define Interrupt_Fila_1_Pin GPIO_PIN_0
+#define Interrupt_Fila_1_GPIO_Port GPIOA
+#define Interrupt_Fila_1_EXTI_IRQn EXTI0_IRQn
+#define Interrupt_Fila_2_Pin GPIO_PIN_1
+#define Interrupt_Fila_2_GPIO_Port GPIOA
+#define Interrupt_Fila_2_EXTI_IRQn EXTI1_IRQn
+#define Interrupt_Fila_3_Pin GPIO_PIN_2
+#define Interrupt_Fila_3_GPIO_Port GPIOA
+#define Interrupt_Fila_3_EXTI_IRQn EXTI2_IRQn
+#define Interrupt_Fila_4_Pin GPIO_PIN_3
+#define Interrupt_Fila_4_GPIO_Port GPIOA
+#define Interrupt_Fila_4_EXTI_IRQn EXTI3_IRQn
 #define I2S3_WS_Pin GPIO_PIN_4
 #define I2S3_WS_GPIO_Port GPIOA
 #define SPI1_SCK_Pin GPIO_PIN_5
@@ -84,26 +94,14 @@ void Error_Handler(void);
 #define SPI1_MOSI_GPIO_Port GPIOA
 #define BOOT1_Pin GPIO_PIN_2
 #define BOOT1_GPIO_Port GPIOB
-#define Interrupt_Fila_1_Pin GPIO_PIN_7
-#define Interrupt_Fila_1_GPIO_Port GPIOE
-#define Interrupt_Fila_1_EXTI_IRQn EXTI9_5_IRQn
-#define Interrupt_Fila_2_Pin GPIO_PIN_8
-#define Interrupt_Fila_2_GPIO_Port GPIOE
-#define Interrupt_Fila_2_EXTI_IRQn EXTI9_5_IRQn
-#define Interrupt_Fila_3_Pin GPIO_PIN_9
-#define Interrupt_Fila_3_GPIO_Port GPIOE
-#define Interrupt_Fila_3_EXTI_IRQn EXTI9_5_IRQn
-#define Interrupt_Fila_4_Pin GPIO_PIN_10
-#define Interrupt_Fila_4_GPIO_Port GPIOE
-#define Interrupt_Fila_4_EXTI_IRQn EXTI15_10_IRQn
-#define Entrada1_Pin GPIO_PIN_11
-#define Entrada1_GPIO_Port GPIOE
-#define Entrada2_Pin GPIO_PIN_12
-#define Entrada2_GPIO_Port GPIOE
-#define Entrada3_Pin GPIO_PIN_13
-#define Entrada3_GPIO_Port GPIOE
-#define Entrada4_Pin GPIO_PIN_14
-#define Entrada4_GPIO_Port GPIOE
+#define Salida_1_Pin GPIO_PIN_11
+#define Salida_1_GPIO_Port GPIOE
+#define Salida_2_Pin GPIO_PIN_12
+#define Salida_2_GPIO_Port GPIOE
+#define Salida_3_Pin GPIO_PIN_13
+#define Salida_3_GPIO_Port GPIOE
+#define Salida_4_Pin GPIO_PIN_14
+#define Salida_4_GPIO_Port GPIOE
 #define CLK_IN_Pin GPIO_PIN_10
 #define CLK_IN_GPIO_Port GPIOB
 #define LD4_Pin GPIO_PIN_12
@@ -152,8 +150,6 @@ void Error_Handler(void);
 #define Audio_SCL_GPIO_Port GPIOB
 #define Audio_SDA_Pin GPIO_PIN_9
 #define Audio_SDA_GPIO_Port GPIOB
-#define MEMS_INT2_Pin GPIO_PIN_1
-#define MEMS_INT2_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

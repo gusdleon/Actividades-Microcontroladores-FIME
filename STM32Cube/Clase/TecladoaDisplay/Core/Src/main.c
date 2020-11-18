@@ -44,43 +44,61 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-int D[8]={0x70, 0x60, 0x50, 0x40, 0x30, 0x20, 0x10, 0x00};
-int key;
-int keys [4][4]={
-		{1,2,3,10},
-		{4,5,6,11},
-		{7,8,9,12},
-		{15,0,14,13},
+char D[8]={0x70, 0x60, 0x50, 0x40, 0x30, 0x20, 0x10, 0x00};
+char key;
+char keys [4][4]={
+		{1,2,3,0},
+		{4,5,6,0},
+		{7,8,9,0},
+		{0,0,0,0},
 };
-unsigned int dn;
-int dig[8];
+unsigned short column[4]={GPIO_PIN_3, GPIO_PIN_2, GPIO_PIN_1, GPIO_PIN_0};
+unsigned short row[4]={GPIO_PIN_14, GPIO_PIN_13, GPIO_PIN_12, GPIO_PIN_11};
+int KeyboardNumber;
+char dig[8];
+unsigned short tiempoDebounce = 200;
+unsigned int tickAnterior = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
-void columna1(void);
-void columna2(void);
-void columna3(void);
-void columna4(void);
+void keyHandle(short);
 void displayNumber(int);
-void setDisplay(int[]);
+void setDisplay(char[]);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 void displayNumber(int count){
 	int power;
-	for(int i=0; i<8; i++){
+	for(short i=0; i<8; i++){
 		power = pow(10,(i+1));
 		dig[i]=(count%power)/(pow(10,i));
 	}
 }
-void setDisplay(int dig[]){
-	for(int i=7; i>=0; i--){
+void setDisplay(char dig[]){
+	for(short i=7; i>=0; i--){
 		GPIOD->ODR=dig[i]+D[i];
 		HAL_Delay(delay);
+	}
+}
+void keyHandle(short columna){
+	if((HAL_GetTick() - tickAnterior) > tiempoDebounce){
+		HAL_Delay(5);
+		GPIOE->ODR=0x0;
+		for(short i=3;i>=0;i--){
+			HAL_GPIO_WritePin(GPIOE,row[i], GPIO_PIN_SET);
+			if(HAL_GPIO_ReadPin (GPIOA, column[columna])){
+				key=keys[i][columna];
+			}
+			HAL_GPIO_WritePin(GPIOE,row[i], GPIO_PIN_RESET);
+		}
+		GPIOE->ODR=0x7800;
+		KeyboardNumber=((KeyboardNumber%10000000)*10+key);
+		tickAnterior = HAL_GetTick();
+		displayNumber(KeyboardNumber);
 	}
 }
 /* USER CODE END 0 */
@@ -321,109 +339,6 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void columna1(){
-	GPIOE->ODR=0x0;
-	HAL_GPIO_WritePin(GPIOE,GPIO_PIN_11, GPIO_PIN_SET);
-	if(HAL_GPIO_ReadPin (GPIOA, GPIO_PIN_0)){
-		key=13;
-		HAL_GPIO_WritePin(GPIOE,GPIO_PIN_11, GPIO_PIN_RESET);
-	}
-	HAL_GPIO_WritePin(GPIOE,GPIO_PIN_12, GPIO_PIN_SET);
-	if(HAL_GPIO_ReadPin (GPIOA, GPIO_PIN_0)){
-		key=12;
-		HAL_GPIO_WritePin(GPIOE,GPIO_PIN_12, GPIO_PIN_RESET);
-	}
-	HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
-	if(HAL_GPIO_ReadPin (GPIOA, GPIO_PIN_0)){
-		key=11;
-		HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET);
-	}
-	HAL_GPIO_WritePin(GPIOE,GPIO_PIN_14, GPIO_PIN_SET);
-	if(HAL_GPIO_ReadPin (GPIOA, GPIO_PIN_0)){
-		key=10;
-		HAL_GPIO_WritePin(GPIOE,GPIO_PIN_14, GPIO_PIN_RESET);
-	}
-	dn=((dn%10000000)*10+key);
-	GPIOE->ODR=0x7800;
-}
-void columna2(){
-	GPIOE->ODR=0x0;
-	HAL_GPIO_WritePin(GPIOE,GPIO_PIN_11, GPIO_PIN_SET);
-	if(HAL_GPIO_ReadPin (GPIOA, GPIO_PIN_1)){
-		key=14;
-		HAL_GPIO_WritePin(GPIOE,GPIO_PIN_11, GPIO_PIN_RESET);
-	}
-	HAL_GPIO_WritePin(GPIOE,GPIO_PIN_12, GPIO_PIN_SET);
-	if(HAL_GPIO_ReadPin (GPIOA, GPIO_PIN_1)){
-		key=9;
-		HAL_GPIO_WritePin(GPIOE,GPIO_PIN_12, GPIO_PIN_RESET);
-	}
-	HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
-	if(HAL_GPIO_ReadPin (GPIOA, GPIO_PIN_1)){
-		key=6;
-		HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET);
-	}
-	HAL_GPIO_WritePin(GPIOE,GPIO_PIN_14, GPIO_PIN_SET);
-	if(HAL_GPIO_ReadPin (GPIOA, GPIO_PIN_1)){
-		key=3;
-		HAL_GPIO_WritePin(GPIOE,GPIO_PIN_14, GPIO_PIN_RESET);
-	}
-	dn=((dn%10000000)*10+key);
-	GPIOE->ODR=0x7800;
-}
-void columna3(){
-	GPIOE->ODR=0x0;
-	HAL_GPIO_WritePin(GPIOE,GPIO_PIN_11, GPIO_PIN_SET);
-	if(HAL_GPIO_ReadPin (GPIOA, GPIO_PIN_2)){
-		key=0;
-		HAL_GPIO_WritePin(GPIOE,GPIO_PIN_11, GPIO_PIN_RESET);
-	}
-	HAL_GPIO_WritePin(GPIOE,GPIO_PIN_12, GPIO_PIN_SET);
-	if(HAL_GPIO_ReadPin (GPIOA, GPIO_PIN_2)){
-		key=8;
-		HAL_GPIO_WritePin(GPIOE,GPIO_PIN_12, GPIO_PIN_RESET);
-	}
-	HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
-	if(HAL_GPIO_ReadPin (GPIOA, GPIO_PIN_2)){
-		key=5;
-		HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET);
-	}
-	HAL_GPIO_WritePin(GPIOE,GPIO_PIN_14, GPIO_PIN_SET);
-	if(HAL_GPIO_ReadPin (GPIOA, GPIO_PIN_2)){
-		key=2;
-		HAL_GPIO_WritePin(GPIOE,GPIO_PIN_14, GPIO_PIN_RESET);
-	}
-	dn=((dn%10000000)*10+key);
-	GPIOE->ODR=0x7800;
-}
-void columna4(){
-	GPIOE->ODR=0x0;
-	HAL_GPIO_WritePin(GPIOE,GPIO_PIN_11, GPIO_PIN_SET);
-	if(HAL_GPIO_ReadPin (GPIOA, GPIO_PIN_3)){
-		key=15;
-		HAL_GPIO_WritePin(GPIOE,GPIO_PIN_11, GPIO_PIN_RESET);
-	}
-	HAL_GPIO_WritePin(GPIOE,GPIO_PIN_12, GPIO_PIN_SET);
-	if(HAL_GPIO_ReadPin (GPIOA, GPIO_PIN_3)){
-		key=7;
-		HAL_GPIO_WritePin(GPIOE,GPIO_PIN_12, GPIO_PIN_RESET);
-	}
-	HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_SET);
-	if(HAL_GPIO_ReadPin (GPIOA, GPIO_PIN_3)){
-		key=4;
-		HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13, GPIO_PIN_RESET);
-	}
-	HAL_GPIO_WritePin(GPIOE,GPIO_PIN_14, GPIO_PIN_SET);
-	if(HAL_GPIO_ReadPin (GPIOA, GPIO_PIN_3)){
-		key=1;
-		HAL_GPIO_WritePin(GPIOE,GPIO_PIN_14, GPIO_PIN_RESET);
-	}
-	dn=((dn%10000000)*10+key);
-	GPIOE->ODR=0x7800;
-}
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
-	displayNumber(dn);
-}
 
 /* USER CODE END 4 */
 

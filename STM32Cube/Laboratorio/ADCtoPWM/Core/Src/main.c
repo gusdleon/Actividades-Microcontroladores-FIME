@@ -45,7 +45,8 @@ ADC_HandleTypeDef hadc1;
 TIM_HandleTypeDef htim1;
 
 /* USER CODE BEGIN PV */
-
+float adcValue;
+int adcOut;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -93,7 +94,7 @@ int main(void)
   MX_ADC1_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -103,6 +104,14 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  HAL_ADC_Start(&hadc1);
+	  if(HAL_ADC_PollForConversion(&hadc1, 5) == HAL_OK){
+		  adcValue = HAL_ADC_GetValue(&hadc1);
+	  }
+	  HAL_ADC_Stop(&hadc1);
+	  adcOut = (0 + (100 - 0) * ((adcValue - 0)/(4095 - 0)));
+	  htim1.Instance->CCR1 = adcOut;
+	  HAL_Delay(10);
   }
   /* USER CODE END 3 */
 }

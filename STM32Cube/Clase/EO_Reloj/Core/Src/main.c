@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "math.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,6 +44,7 @@ RTC_HandleTypeDef hrtc;
 
 /* USER CODE BEGIN PV */
 int D[6]={0, 16, 48, 64, 96, 112}, cronometro [6], hold=0;
+int DD[2]={64, 48};
 char key;
 char keys [4][4]={
 		{1, 2, 3, 'A'},
@@ -54,6 +55,7 @@ char keys [4][4]={
 unsigned short column[4]={GPIO_PIN_3, GPIO_PIN_2, GPIO_PIN_1, GPIO_PIN_0};
 unsigned short row[4]={GPIO_PIN_14, GPIO_PIN_13, GPIO_PIN_12, GPIO_PIN_11};
 short numero;
+short numerod;
 RTC_TimeTypeDef aTime1;
 RTC_DateTypeDef aDate1;
 unsigned short tiempoDebounce = 200;
@@ -67,24 +69,39 @@ static void MX_RTC_Init(void);
 /* USER CODE BEGIN PFP */
 void keyHandle(short);
 void action(char);
-void displayNumber(RTC_TimeTypeDef);
-void setDisplay(int[]);
+void displayNumber(RTC_TimeTypeDef, short);
+void setDisplay(int[], short);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void displayNumber(RTC_TimeTypeDef tiempo){
-	cronometro[0] = (tiempo.Hours / 16);
-	cronometro[1] = (tiempo.Hours % 16);
-	cronometro[2] = (tiempo.Minutes / 16);
-	cronometro[3] = (tiempo.Minutes % 16);
-	cronometro[4] = (tiempo.Seconds / 16);
-	cronometro[5] = (tiempo.Seconds % 16);
+void displayNumber(RTC_TimeTypeDef tiempo, short numerodsip){
+	if(numero==0){
+		cronometro[0] = (tiempo.Hours / 16);
+		cronometro[1] = (tiempo.Hours % 16);
+		cronometro[2] = (tiempo.Minutes / 16);
+		cronometro[3] = (tiempo.Minutes % 16);
+		cronometro[4] = (tiempo.Seconds / 16);
+		cronometro[5] = (tiempo.Seconds % 16);
+	}else{
+		int power;
+		for(int i=1; i>=0;i--){
+			power = pow(10,(i+1));
+			cronometro[i]=(numerodsip%power)/(pow(10,i));
+		}
+	}
 }
-void setDisplay(int numeros[]){
-	for(int i=0; i<6; i++){
-		GPIOD->ODR=numeros[i]+D[i];
-		HAL_Delay(1);
+void setDisplay(int numeros[], short setnumero){
+	if(setnumero==0){
+		for(int i=0; i<6; i++){
+			GPIOD->ODR=numeros[i]+D[i];
+			HAL_Delay(1);
+		}
+	}else{
+		for(int j=1; j>=0; j--){
+			GPIOD->ODR=numeros[j] + DD[j];
+			HAL_Delay(1);
+		}
 	}
 }
 void keyHandle(short GPIO_Pin){
@@ -107,23 +124,29 @@ void keyHandle(short GPIO_Pin){
 void action(char key){
 	if(key=='#'){
 		hold=0;
+		numero=0;
+		numerod=0;
 	}
 	if(key=='*' || hold==1){
 		hold=1;
 		if((key == 1 || key ==2 || key == 3 || key == 4 || key == 5 || key == 6 || key ==7 || key == 8 || key==9 || key == 0) && hold==1){
-			numero=(((numero%10)*16)+key);
+			numero=(((numero%16)*16)+key);
+			numerod=(((numerod%10)*10)+key);
 		}
 		if(key== 'A' && numero<0x24){
 			aTime1.Hours = numero;
 			numero=0;
+			numerod=0;
 		}
 		if(key== 'B' && numero<0x60){
 			aTime1.Minutes = numero;
 			numero=0;
+			numerod=0;
 		}
 		if(key== 'C' && numero<0x60){
-				aTime1.Seconds = numero;
-				numero=0;
+			aTime1.Seconds = numero;
+			numero=0;
+			numerod=0;
 		}
 	}
 }
@@ -176,8 +199,8 @@ int main(void)
 	  if(hold==1){
 		  HAL_RTC_SetTime(&hrtc, &aTime1, RTC_FORMAT_BCD);
 	  }
-	  displayNumber(aTime1);
-	  setDisplay(cronometro);
+	  displayNumber(aTime1, numerod);
+	  setDisplay(cronometro, numerod);
   }
   /* USER CODE END 3 */
 }

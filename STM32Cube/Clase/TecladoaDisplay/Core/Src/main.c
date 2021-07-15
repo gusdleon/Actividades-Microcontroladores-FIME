@@ -33,7 +33,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define delay 1
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -44,7 +44,15 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-char D[8]={0x70, 0x60, 0x50, 0x40, 0x30, 0x20, 0x10, 0x00};
+int D1=0x70 ;//Y7
+int D2=0x60;
+int D3=0x50;
+int D4=0x40;
+int D5=0x30;
+int D6=0x20;
+int D7=0x10;
+int D8=0x00;
+int numeros[10]={0x0,0x01,0x2,0x3,0x4,0x5,0x6,0x7,0x8,0x9};
 char key;
 char keys [4][4]={
 		{1,2,3,0},
@@ -55,7 +63,6 @@ char keys [4][4]={
 unsigned short column[4]={GPIO_PIN_3, GPIO_PIN_2, GPIO_PIN_1, GPIO_PIN_0};
 unsigned short row[4]={GPIO_PIN_14, GPIO_PIN_13, GPIO_PIN_12, GPIO_PIN_11};
 int KeyboardNumber;
-char dig[8];
 unsigned short tiempoDebounce = 200;
 unsigned int tickAnterior = 0;
 /* USER CODE END PV */
@@ -65,25 +72,62 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
 void keyHandle(short);
-void displayNumber(int);
-void setDisplay(char[]);
+void displayNumber(int numero);
+void setDisplay(int dig1, int dig2, int dig3, int dig4, int dig5, int dig6, int dig7, int dig8);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void displayNumber(int count){
-	int power;
-	for(short i=0; i<8; i++){
-		power = pow(10,(i+1));
-		dig[i]=(count%power)/(pow(10,i));
-	}
+/**
+  * @brief Toma el valor de entrada
+  * y los descompone en digitos individuales.
+  * @param int
+  * @retval None
+  */
+void displayNumber (int count){
+	int dig1,dig2,dig3,dig4,dig5,dig6,dig7,dig8;
+	dig1=count%10; //almacenar el 1
+	dig2=(count%100)/10; //almacenar el 2
+	dig3=(count%1000)/100; //almacenar el 3
+	dig4=(count%10000)/1000; //almacenar el 4
+	dig5=(count%100000)/10000; //almacenar el 5
+	dig6=(count%1000000)/100000; //almacenar el 6
+	dig7=(count%10000000)/1000000; //almacenar el 7
+	dig8=(count%100000000)/10000000; //almacenar el 8
+	setDisplay(dig1,dig2,dig3,dig4,dig5,dig6,dig7,dig8);
 }
-void setDisplay(char dig[]){
-	for(short i=7; i>=0; i--){
-		GPIOD->ODR=dig[i]+D[i];
-		HAL_Delay(delay);
-	}
+
+/**
+  * @brief Toma los valores de entrada
+  * y los imprime en los displays.
+  * @param 8 numeros enteros entre 0 y 9 (6 en esta practica).
+  * @see displayNumber()
+  * @retval None
+  */
+void setDisplay(int dig1, int dig2, int dig3, int dig4, int dig5, int dig6, int dig7, int dig8){
+	GPIOD->ODR=numeros[dig1]+D1;
+	HAL_Delay(1);
+	GPIOD->ODR=numeros[dig2]+D2;
+	HAL_Delay(1);
+	GPIOD->ODR=numeros[dig3]+D3;
+	HAL_Delay(1);
+	GPIOD->ODR=numeros[dig4]+D4;
+	HAL_Delay(1);
+	GPIOD->ODR=numeros[dig5]+D5;
+	HAL_Delay(1);
+	GPIOD->ODR=numeros[dig6]+D6;
+	HAL_Delay(1);
+	GPIOD->ODR=numeros[dig7]+D7;
+	HAL_Delay(1);
+	GPIOD->ODR=numeros[dig8]+D8;
+	HAL_Delay(1);
 }
+/**
+  * @brief Decodifica un teclado matricial
+  * @param short numero de el pin donde
+  * se origino la interrupcion.
+  * @retval None
+  */
 void keyHandle(short columna){
 	if((HAL_GetTick() - tickAnterior) > tiempoDebounce){
 		HAL_Delay(5);
@@ -98,7 +142,6 @@ void keyHandle(short columna){
 		GPIOE->ODR=0x7800;
 		KeyboardNumber=((KeyboardNumber%10000000)*10+key);
 		tickAnterior = HAL_GetTick();
-		displayNumber(KeyboardNumber);
 	}
 }
 /* USER CODE END 0 */
@@ -142,10 +185,11 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  setDisplay(dig);
+	  displayNumber(KeyboardNumber);
   }
   /* USER CODE END 3 */
 }
+
 
 /**
   * @brief System Clock Configuration
